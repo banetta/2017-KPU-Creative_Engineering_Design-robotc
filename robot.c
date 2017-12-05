@@ -12,236 +12,316 @@ void touchif2(); //2 touch sensor activate
 void reset_touchcheck(); //SensorValue, touchcheck reset to 0
 void signal1(); //1st level signal
 void signal2(); //2nd level signal
+void clear();
 int touchcheck, signalcheck;
 
 task main()
 {
-   int levelcount; //123 - level 1 , 456 - level 2 , 789 - level 3
+	int levelcount; //123 - level 1 , 456 - level 2 , 789 - level 3
 
-   while (1)
-   {
-			nxtDisplayCenteredBigTextLine(1, "Hello NXT!");
-			nxtDisplayCenteredBigTextLine(3, "1. Tutorial");
-			nxtDisplayCenteredBigTextLine(4, "2. Play Game");
-			nxtDisplayCenteredBigTextLine(5, "3. Exit");
-      touchif();
-      if (touchcheck == 1)
-      {
-         displayCenteredBigTextLine(1, "Tutorial");
-         displayCenteredTextLine(1, "Touch by light or sound");
+	while (1)
+	{
+		clear();
+		nxtDisplayCenteredTextLine(1, "Hello NXT!");
+		nxtDisplayCenteredTextLine(3, "1. Tutorial");
+		nxtDisplayCenteredTextLine(4, "2. Play Game");
+		nxtDisplayCenteredTextLine(5, "3. Exit");
+		touchif();
+		if (touchcheck == 1)
+		{
+			clear();
+			displayCenteredTextLine(1, "Tutorial");
+			displayCenteredTextLine(1, "Touch by light or sound");
+			wait1Msec(1000);
 
-         motor[motorA] = 200;
-         wait1Msec(500);
 
-         if (SensorValue[S1] == 1)
-         {
-            // playSound(); correct answer sound
-         }
-         else
-         {
-            // playsound(); discorrect answer sound
-         }
-         reset_touchcheck();
-      }
+			motor[motorA] = 200;
+			wait1Msec(1000);
+			motor[motorA] = 0;
+			while(1)
+			{
 
-      else if (touchcheck == 2)
-      {
-      	levelcount = 1;
-        displayCenteredBigTextLine(3, "Play Game");
-        //displayClearTextLine();
-        wait1Msec(1000);
-        while (levelcount < 10) {
-            if(levelcount < 4) {
-               displayCenteredBigTextLine(3, "Level 1");
-               signal1();
-               touchif();
-               clearTimer(T1);
-               if (touchcheck == signalcheck && time1[T1] < 3000) {
-                  // correct answer sound
-                  levelcount++;
-               }
-               else
-               {
-                  displayCenteredBigTextLine(3, "Game Over");
-               		// discorrect answer sound
-                  break;
-               }
-            }
-            else if(levelcount < 7) {
-               if (levelcount == 4) {
-                  // level up sound
-               }
-               displayCenteredBigTextLine(3, "Level 2");
-               signal2();
-               touchif2();
-               clearTimer(T1);
-               if (touchcheck == signalcheck && time1[T1] < 2000) {
-                  // correct answer sound
-                  levelcount++;
-               }
-               else
-               {  displayCenteredBigTextLine(3, "Game Over");
-               		// discorrect answer sound
-                  break;
-               }
-            }
-            else if(levelcount > 6) {
-               if (levelcount == 7) {
-                  // level up sound
-               }
-               displayCenteredBigTextLine(3, "Level 3");
-               signal2();
-               touchif2();
-               clearTimer(T1);
-               if (touchcheck == signalcheck && time1[T1] < 1000) {
-                  // correct answer sound
-                  levelcount++;
-               }
-               else
-               {
-                  displayCenteredBigTextLine(3, "Game Over");
-               		// discorrect answer sound
-                  break;
-               }
-             }
-            reset_touchcheck();
-         }
-         displayCenteredBigTextLine(3, "Game Clear");
-         //playsound - game clear sound
-      }
-      else if(touchcheck == 3){
-      displayCenteredBigTextLine(3, "Bye Bye~");
-      break;
-      }
+				if (SensorValue[S1] == 1)
+				{
+					clear();
+					playSound(soundBeepBeep);
+					nxtDisplayCenteredTextLine(1, "Correct!");
+					wait1Msec(3000);
+					break;
+				}
+				else if(SensorValue[S1] == 0)
+				{
+					clear();
+					nxtDisplayCenteredTextLine(1, "Discorrect!");
 
-   }
+
+					// playsound(); discorrect answer sound
+				}
+			}
+			reset_touchcheck();
+		}
+
+		else if (touchcheck == 2)
+		{
+			levelcount = 1;
+			clear();
+			displayCenteredTextLine(3, "Play Game");
+			//displayClearTextLine();
+			wait1Msec(5000);
+			while (levelcount < 10) {
+				if(levelcount < 4) {
+					clear();
+					displayCenteredTextLine(3, "Level %d",levelcount);
+					wait1Msec(1000);
+					signal1();
+					clearTimer(T1);
+					touchcheck = 0;
+					while(time1[T1]<5000){
+						touchif();
+					}
+
+					if (touchcheck == signalcheck) {
+						playSound(soundBeepBeep); // correct answer sound
+						clear();
+						nxtDisplayCenteredBigTextLine(3,"Correct!");
+						wait1Msec(1000);
+						clearTimer(T1);
+						levelcount++;
+					}
+					else
+					{
+						clear();
+						playsoundfile("Ouch.rsf");
+						displayCenteredTextLine(3, "Game Over");
+						wait1Msec(3000);
+					 // discorrect answer sound
+						break;
+					}
+				}
+				else if(levelcount < 7) {
+					if (levelcount == 4) {
+						clear();
+						displayCenteredTextLine(3, "Level up!!");
+						playSoundfile("Start up.rsf");
+						wait1Msec(1000);
+					}
+					clear();
+					displayCenteredTextLine(3, "Level %d",levelcount);
+					wait1Msec(1000);
+					signal2();
+					touchcheck = 0;
+					clearTimer(T1);
+					while(time1[T1]<5000){
+						touchif2();
+					}
+					if (touchcheck == signalcheck) {
+						clear();
+						playSound(soundBeepBeep);
+						nxtDisplayCenteredBigTextLine(3,"Correct!");
+						wait1Msec(1000);
+						clearTimer(T1);
+						levelcount++;
+					}
+					else
+					{  clear();
+						playsoundfile("Ouch.rsf");
+						displayCenteredTextLine(3, "Game Over");
+						wait1Msec(3000);
+						// discorrect answer sound
+						break;
+					}
+				}
+				else if(levelcount > 6) {
+					if (levelcount == 4) {
+						clear();
+						displayCenteredTextLine(3, "Level up!!");
+						playSoundfile("Start up.rsf");
+						wait1Msec(1000);
+					}
+					clear();
+					displayCenteredTextLine(3, "Level %d",levelcount);
+					wait1Msec(1000);
+					signal2();
+					touchcheck = 0;
+					clearTimer(T1);
+					while(time1[T1]<3000){
+						touchif2();
+					}
+					if (touchcheck == signalcheck) {
+						clear();
+						playSound(soundBeepBeep);
+						nxtDisplayCenteredBigTextLine(3,"Correct!");
+						wait1Msec(1000);
+						clearTimer(T1);
+						levelcount++;
+					}
+					else
+					{  clear();
+						playsoundfile("Ouch.rsf");
+						displayCenteredTextLine(3, "Game Over");
+						wait1Msec(3000);
+						// discorrect answer sound
+						break;
+					}
+				}
+				reset_touchcheck();
+			}
+			playSoundFile("Goodbye.rsf");
+			displayCenteredBigTextLine(3, "Game Clear");
+			wait1Msec(3000);
+			//playsoundfile("!startup");//playsound - game clear sound
+		}
+		else if(touchcheck == 3){
+			playSoundFile("Goodbye.rsf");
+			displayCenteredBigTextLine(3, "Bye Bye~");
+			wait1Msec(3000);
+			break;
+		}
+
+	}
 }
 
 
 
 void touchif()
 {
-    if (SensorValue[S1] == 1 && SensorValue[S2] == 0 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 1;
-    }
-    else if (SensorValue[S2] == 1 && SensorValue[S1] == 0 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 2;
-    }
-    else if (SensorValue[S3] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 3;
-    }
-    else if (SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0 && SensorValue[S3] == 0)
-    {
-        touchcheck = 4;
-    }
-    else // When not pressed
-        touchcheck = 0;
+	if (SensorValue[S1] == 1 && SensorValue[S2] == 0 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 1;
+	}
+	else if (SensorValue[S2] == 1 && SensorValue[S1] == 0 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 2;
+	}
+	else if (SensorValue[S3] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 3;
+	}
+	else if (SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0 && SensorValue[S3] == 0)
+	{
+		touchcheck = 4;
+	}
+
 }
 
 void touchif2() {
-    if (SensorValue[S1] == 1 && SensorValue[S2] == 1 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 1;
-    }
-    else if (SensorValue[S1] == 1 && SensorValue[S3] == 1 && SensorValue[S2] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 2;
-    }
-    else if (SensorValue[S1] == 1 && SensorValue[S4] == 1 && SensorValue[S2] == 0 && SensorValue[S3] == 0)
-    {
-        touchcheck = 3;
-    }
-    else if (SensorValue[S2] == 1 && SensorValue[S3] == 1 && SensorValue[S1] == 0 && SensorValue[S4] == 0)
-    {
-        touchcheck = 4;
-    }
-    else if (SensorValue[S2] == 1 && SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S3] == 0)
-    {
-        touchcheck = 5;
-    }
-    else if (SensorValue[S3] == 1 && SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0)
-    {
-        touchcheck = 6;
-    }
-    else // When not pressed
-        touchcheck = 0;
+	if (SensorValue[S1] == 1 && SensorValue[S2] == 1 && SensorValue[S3] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 1;
+	}
+	else if (SensorValue[S1] == 1 && SensorValue[S3] == 1 && SensorValue[S2] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 2;
+	}
+	else if (SensorValue[S1] == 1 && SensorValue[S4] == 1 && SensorValue[S2] == 0 && SensorValue[S3] == 0)
+	{
+		touchcheck = 3;
+	}
+	else if (SensorValue[S2] == 1 && SensorValue[S3] == 1 && SensorValue[S1] == 0 && SensorValue[S4] == 0)
+	{
+		touchcheck = 4;
+	}
+	else if (SensorValue[S2] == 1 && SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S3] == 0)
+	{
+		touchcheck = 5;
+	}
+	else if (SensorValue[S3] == 1 && SensorValue[S4] == 1 && SensorValue[S1] == 0 && SensorValue[S2] == 0)
+	{
+		touchcheck = 6;
+	}
+
 }
 
 void reset_touchcheck() {
-   touchcheck = 0;
+	touchcheck = 0;
 }
 
 void signal1()
 {
-   int number = random(4);
-   switch (number) {
-   case 1:
-      signalcheck = 1;
-      motor[motorA] = 200;
-      wait1Msec(500);
-      break;
+	int number = random(3);
+	switch (number) {
+	case 0:
+		signalcheck = 1;
+		motor[motorA] = 200;
+		wait1Msec(500);
+		motor[motorA] = 0;
+		break;
 
-   case 2:
-      signalcheck = 2;
-      motor[motorB] = 200;
-      wait1Msec(500);
-      break;
+	case 1:
+		signalcheck = 2;
+		motor[motorB] = 200;
+		wait1Msec(500);
+		motor[motorB] = 0;
+		break;
 
-   case 3:
-      signalcheck = 3;
-      //playsound
-      break;
+	case 2:
+		signalcheck = 3;
+		playSound(soundLowBuzz);
+		wait1Msec(500);
+		break;
 
-   case 4:
-      signalcheck = 4;
-      //platsound
-      break;
-   }
+	case 3:
+		signalcheck = 4;
+		playSound(soundFastUpwardTones);
+		wait1Msec(500);
+		break;
+	}
 }
 
 void signal2() {
-   int number1 = random(4);
-   int number2 = random(4);
-   while (number1 == number2) {
-      number2 = random(4);
-   }
+	int number1 = random(3);
+	int number2 = random(3);
+	while (number1 == number2) {
+		number2 = random(3);
+	}
 
-   if (number1 == 1 && number2 == 2 || number1 == 2 && number2 == 1) {
-      signalcheck = 1;
-      motor[motorA] = 200;
-      motor[motorB] = 200;
-      wait1Msec(500);
-   }
-   else if (number1 == 1 && number2 == 3 || number1 == 3 && number2 == 1) {
-      signalcheck = 2;
-      motor[motorA] = 200;
-      //playsound - 3nd sound
-      wait1Msec(500);
-   }
-   else if (number1 == 1 && number2 == 4 || number1 == 4 && number2 == 1) {
-      signalcheck = 3;
-      motor[motorA] = 200;
-      //playsound - 4nd sound
-      wait1Msec(500);
-   }
-   else if (number1 == 2 && number2 == 3 || number1 == 3 && number2 == 2) {
-      signalcheck = 4;
-      motor[motorB] = 200;
-      //playsound - 3nd sound
-      wait1Msec(500);
-   }
-   else if (number1 == 2 && number2 == 4 || number1 == 4 && number2 == 2) {
-      signalcheck = 5;
-      motor[motorB] = 200;
-      //palysound - 4nd sound
-      wait1Msec(500);
-   }
-   else if (number1 == 3 && number2 == 4 || number1 == 4 && number2 == 3) {
-      signalcheck = 6;
-      //playsound - 3nd sound
-      //playsound - 4nd sound
-   }
+	if ((number1 == 0 && number2) == 1 || (number1 == 1 && number2 == 0)) {
+		signalcheck = 1;
+		motor[motorA] = 200;
+		motor[motorB] = 200;
+		wait1Msec(500);
+		motor[motorA] = 0;
+		motor[motorB] = 0;
+	}
+	else if ((number1 == 0 && number2 == 2) || (number1 == 2 && number2 == 0)) {
+		signalcheck = 2;
+		motor[motorA] = 200;
+		playSound(soundLowBuzz);//playsound - 3nd sound
+		wait1Msec(500);
+		motor[motorA] = 0;
+	}
+	else if ((number1 == 0 && number2 == 3) || (number1 == 3 && number2 == 0)) {
+		signalcheck = 3;
+		motor[motorA] = 200;
+		playSound(soundFastUpwardTones);//playsound - 4nd sound
+		wait1Msec(500);
+		motor[motorA] = 0;
+	}
+	else if ((number1 == 1 && number2 == 2) || (number1 == 2 && number2 == 1)) {
+		signalcheck = 4;
+		motor[motorB] = 200;
+		playSound(soundLowBuzzShort);//playsound - 3nd sound
+		wait1Msec(500);
+		motor[motorB] = 0;
+	}
+	else if ((number1 == 1 && number2 == 3) || (number1 == 3 && number2 == 1)) {
+		signalcheck = 5;
+		motor[motorB] = 200;
+		playSound(soundFastUpwardTones);//palysound - 4nd sound
+		wait1Msec(500);
+		motor[motorB] = 0;
+	}
+	else if ((number1 == 2 && number2 == 3) || (number1 == 3 && number2 == 2)) {
+		signalcheck = 6;
+		playSound(soundLowBuzzShort);//playsound - 3nd sound
+		playSound(soundFastUpwardTones);//playsound - 4nd sound
+	}
+}
+void clear(){
+	nxtDisplayClearTextLine(1);
+	nxtDisplayClearTextLine(2);
+	nxtDisplayClearTextLine(3);
+	nxtDisplayClearTextLine(4);
+	nxtDisplayClearTextLine(5);
+	nxtDisplayClearTextLine(6);
 }
