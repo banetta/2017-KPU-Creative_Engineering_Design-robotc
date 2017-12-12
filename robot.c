@@ -67,7 +67,7 @@ task main()
 			clear();
 			displayCenteredTextLine(3, "Play Game");
 			//displayClearTextLine();
-			wait1Msec(5000);
+			wait1Msec(3000);
 			while (levelcount < 10) {
 				if(levelcount < 4) {
 					clear();
@@ -132,7 +132,7 @@ task main()
 					}
 				}
 				else if(levelcount > 6) {
-					if (levelcount == 4) {
+					if (levelcount == 7) {
 						clear();
 						displayCenteredTextLine(3, "Level up!!");
 						playSoundfile("Start up.rsf");
@@ -168,11 +168,18 @@ task main()
 			}
 			clear();
 			playSoundFile("Goodbye.rsf");
-			displayCenteredTextLine(3, "Game Clear");
-			wait1Msec(3000);
-			//playsoundfile("!startup");//playsound - game clear sound
-		}
-		else if(touchcheck == 3){
+			if(levelcount == 10){
+				displayCenteredTextLine(3, "Game Clear");
+				wait1Msec(3000);
+				}
+			else{
+				displayCenteredTextLine(3, "Game Over");
+				wait1Msec(3000);
+				}
+
+			}
+
+			else if(touchcheck == 3){
 			clear();
 			playSoundFile("Goodbye.rsf");
 			displayCenteredTextLine(3, "Bye Bye~");
