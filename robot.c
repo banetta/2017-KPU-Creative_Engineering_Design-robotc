@@ -76,7 +76,7 @@ task main()
 					signal1();
 					clearTimer(T1);
 					touchcheck = 0;
-					while(time1[T1]<5000){
+					while(time1[T1]<2500){
 						touchif();
 					}
 
@@ -111,7 +111,7 @@ task main()
 					signal2();
 					touchcheck = 0;
 					clearTimer(T1);
-					while(time1[T1]<5000){
+					while(time1[T1]<2500){
 						touchif2();
 					}
 					if (touchcheck == signalcheck) {
@@ -144,7 +144,7 @@ task main()
 					signal2();
 					touchcheck = 0;
 					clearTimer(T1);
-					while(time1[T1]<3000){
+					while(time1[T1]<1500){
 						touchif2();
 					}
 					if (touchcheck == signalcheck) {
@@ -166,14 +166,16 @@ task main()
 				}
 				reset_touchcheck();
 			}
+			clear();
 			playSoundFile("Goodbye.rsf");
-			displayCenteredBigTextLine(3, "Game Clear");
+			displayCenteredTextLine(3, "Game Clear");
 			wait1Msec(3000);
 			//playsoundfile("!startup");//playsound - game clear sound
 		}
 		else if(touchcheck == 3){
+			clear();
 			playSoundFile("Goodbye.rsf");
-			displayCenteredBigTextLine(3, "Bye Bye~");
+			displayCenteredTextLine(3, "Bye Bye~");
 			wait1Msec(3000);
 			break;
 		}
